@@ -25,3 +25,4 @@ class FetchCharacters extends CharacterEvent {
   @override
   List<Object?> get props => [page, name, status, species, gender];
 }
+

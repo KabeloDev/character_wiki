@@ -1,6 +1,6 @@
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/character_bloc.dart';
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/character_event.dart';
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/character_state.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_bloc.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_event.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -119,7 +119,7 @@ class _HomeState extends State<Home> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          MaterialButton(onPressed: () {}, child: const Text('Characters')),
+          MaterialButton(onPressed: () {context.read<CharacterBloc>().add(const FetchCharacters());}, child: const Text('Characters')),
           MaterialButton(onPressed: () {}, child: const Text('Episode')),
           MaterialButton(onPressed: () {}, child: const Text('Location')),
         ],

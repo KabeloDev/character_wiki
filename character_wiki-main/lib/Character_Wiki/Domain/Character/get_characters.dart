@@ -1,5 +1,5 @@
-import 'package:character_wiki/Character_Wiki/Domain/character.dart';
-import 'package:character_wiki/Character_Wiki/Domain/character_repository.dart';
+import 'package:character_wiki/Character_Wiki/Domain/Character/character.dart';
+import 'package:character_wiki/Character_Wiki/Domain/Character/character_repository.dart';
 
 class GetCharacters {
   final CharacterRepository repository;

@@ -1,5 +1,4 @@
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/character_bloc.dart';
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/character_event.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/Home/home.dart';
 import 'package:character_wiki/service_locator.dart';
 import 'package:flutter/material.dart';
@@ -31,8 +30,6 @@ class AppRoot extends StatelessWidget {
     // Dispatch fetch event after build
     return Builder(
       builder: (context) {
-        context.read<CharacterBloc>().add(const FetchCharacters());
-
         return const MaterialApp(
           debugShowCheckedModeBanner: false,
           title: 'Rick & Morty Wiki',

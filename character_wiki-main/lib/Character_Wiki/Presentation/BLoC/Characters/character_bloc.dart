@@ -1,8 +1,8 @@
 
 import 'package:bloc/bloc.dart';
-import 'package:character_wiki/Character_Wiki/Domain/get_characters.dart';
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/character_event.dart';
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/character_state.dart';
+import 'package:character_wiki/Character_Wiki/Domain/Character/get_characters.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_event.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_state.dart';
 
 class CharacterBloc extends Bloc<CharacterEvent, CharacterState> {
   final GetCharacters getCharacters;

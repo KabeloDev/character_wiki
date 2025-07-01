@@ -1,4 +1,4 @@
-import 'package:character_wiki/Character_Wiki/Domain/character.dart';
+import 'package:character_wiki/Character_Wiki/Domain/Character/character.dart';
 import 'package:equatable/equatable.dart';
 
 abstract class CharacterState extends Equatable {

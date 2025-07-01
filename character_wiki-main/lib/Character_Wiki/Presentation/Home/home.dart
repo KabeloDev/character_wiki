@@ -1,8 +1,11 @@
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_event.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_state.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_bloc.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_event.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_event.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/Episode/episode.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/Location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -130,11 +133,23 @@ class _HomeState extends State<Home> {
             },
             child: const Text('Characters'),
           ),
-          MaterialButton(onPressed: () {}, child: const Text('Episodes')),
+          MaterialButton(
+            onPressed: () {
+              context.read<EpisodeBloc>().add(FetchEpisodes());
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const EpisodeScreen()),
+              );
+            },
+            child: const Text('Episodes'),
+          ),
           MaterialButton(
             onPressed: () {
               context.read<LocationBloc>().add(FetchLocations());
-              Navigator.push(context, MaterialPageRoute(builder: (context) => const LocationScreen())); 
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LocationScreen()),
+              );
             },
             child: const Text('Locations'),
           ),

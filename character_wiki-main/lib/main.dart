@@ -1,4 +1,5 @@
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_bloc.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/Home/home.dart';
 import 'package:character_wiki/service_locator.dart';
@@ -24,6 +25,9 @@ class MyApp extends StatelessWidget {
         BlocProvider(
           create: (_) => sl<LocationBloc>(),
         ),
+        BlocProvider(
+          create: (_) => sl<EpisodeBloc>(),
+        ),
       ],
       child: const AppRoot(),
     );
@@ -35,7 +39,6 @@ class AppRoot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Dispatch fetch event after build
     return Builder(
       builder: (context) {
         return const MaterialApp(

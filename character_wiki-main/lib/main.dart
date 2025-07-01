@@ -1,4 +1,5 @@
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_bloc.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/Home/home.dart';
 import 'package:character_wiki/service_locator.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,15 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (_) => sl<CharacterBloc>(),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (_) => sl<CharacterBloc>(),
+        ),
+        BlocProvider(
+          create: (_) => sl<LocationBloc>(),
+        ),
+      ],
       child: const AppRoot(),
     );
   }

@@ -1,9 +1,11 @@
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_event.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_state.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_bloc.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_event.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/Location/location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -40,11 +42,12 @@ class _HomeState extends State<Home> {
                     return const Center(child: CircularProgressIndicator());
                   } else if (state is CharacterLoaded) {
                     return GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                      ),
+                      gridDelegate:
+                          const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            crossAxisSpacing: 8.0,
+                            mainAxisSpacing: 8.0,
+                          ),
                       itemCount: state.characters.length,
                       itemBuilder: (context, index) {
                         final character = state.characters[index];
@@ -56,7 +59,9 @@ class _HomeState extends State<Home> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(8),
                               border: Border.all(
-                                color: isSelected ? Colors.white54 : Colors.transparent,
+                                color: isSelected
+                                    ? Colors.white54
+                                    : Colors.transparent,
                                 width: 2,
                               ),
                               image: DecorationImage(
@@ -119,9 +124,20 @@ class _HomeState extends State<Home> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          MaterialButton(onPressed: () {context.read<CharacterBloc>().add(const FetchCharacters());}, child: const Text('Characters')),
-          MaterialButton(onPressed: () {}, child: const Text('Episode')),
-          MaterialButton(onPressed: () {}, child: const Text('Location')),
+          MaterialButton(
+            onPressed: () {
+              context.read<CharacterBloc>().add(const FetchCharacters());
+            },
+            child: const Text('Characters'),
+          ),
+          MaterialButton(onPressed: () {}, child: const Text('Episodes')),
+          MaterialButton(
+            onPressed: () {
+              context.read<LocationBloc>().add(FetchLocations());
+              Navigator.push(context, MaterialPageRoute(builder: (context) => const LocationScreen())); 
+            },
+            child: const Text('Locations'),
+          ),
         ],
       ),
     );
@@ -135,7 +151,14 @@ class _HomeState extends State<Home> {
           const DrawerHeader(
             decoration: BoxDecoration(color: Colors.blueGrey),
             child: Center(
-              child: Text('Filters', style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold)),
+              child: Text(
+                'Filters',
+                style: TextStyle(
+                  fontSize: 22,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           ),
           _buildFilterSection('Characters', [
@@ -148,13 +171,17 @@ class _HomeState extends State<Home> {
             _buildDropdown('Choose', ['Episode 1', 'Episode 2', 'Episode 3']),
           ]),
           _buildFilterSection('Location', [
-            _buildDropdown('Choose', ['Location 1', 'Location 2', 'Location 3']),
+            _buildDropdown('Choose', [
+              'Location 1',
+              'Location 2',
+              'Location 3',
+            ]),
           ]),
           const SizedBox(height: 20),
           Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0), 
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
             child: ElevatedButton.icon(
-              onPressed: () {}, 
+              onPressed: () {},
               icon: const Icon(Icons.clear),
               label: const Text('Clear Filters'),
               style: ElevatedButton.styleFrom(
@@ -171,19 +198,27 @@ class _HomeState extends State<Home> {
   Widget _buildFilterSection(String title, List<Widget> children) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
-        const SizedBox(height: 8),
-        ...children,
-        const SizedBox(height: 10),
-      ]),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            title,
+            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 8),
+          ...children,
+          const SizedBox(height: 10),
+        ],
+      ),
     );
   }
 
   Widget _buildDropdown(String label, List<String> items) {
     return DropdownMenu<String>(
       label: Text(label),
-      dropdownMenuEntries: items.map((e) => DropdownMenuEntry(value: e, label: e)).toList(),
+      dropdownMenuEntries: items
+          .map((e) => DropdownMenuEntry(value: e, label: e))
+          .toList(),
     );
   }
 }

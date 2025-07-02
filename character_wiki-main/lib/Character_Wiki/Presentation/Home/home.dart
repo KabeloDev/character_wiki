@@ -1,10 +1,9 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_event.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Characters/character_state.dart';
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_bloc.dart';
-import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_event.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_event.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/Episode/episode.dart';
@@ -24,10 +23,33 @@ class _HomeState extends State<Home> {
   String? selectedSpecies;
   String? selectedGender;
 
+  bool isOffline = false;
+
   @override
   void initState() {
     super.initState();
     context.read<CharacterBloc>().add(const FetchCharacters());
+    _checkConnection();
+    Connectivity().onConnectivityChanged.listen((
+      List<ConnectivityResult> result,
+    ) {
+      final hasConnection = result.any(
+        (connection) => connection != ConnectivityResult.none,
+      );
+      setState(() => isOffline = !hasConnection);
+      if (hasConnection) {
+        // ignore: use_build_context_synchronously
+        context.read<CharacterBloc>().add(const FetchCharacters());
+      }
+    });
+  }
+
+  Future<void> _checkConnection() async {
+    final result = await Connectivity().checkConnectivity();
+    setState(() {
+      // ignore: unrelated_type_equality_checks
+      isOffline = result == ConnectivityResult.none;
+    });
   }
 
   @override
@@ -43,7 +65,11 @@ class _HomeState extends State<Home> {
               child: Center(
                 child: Text(
                   'Filters',
-                  style: TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontSize: 22,
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
@@ -52,7 +78,10 @@ class _HomeState extends State<Home> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Characters', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+                  const Text(
+                    'Characters',
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+                  ),
                   const SizedBox(height: 8),
                   DropdownButtonFormField<String>(
                     value: selectedStatus,
@@ -81,11 +110,13 @@ class _HomeState extends State<Home> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     onPressed: () {
-                      context.read<CharacterBloc>().add(FilterCharacters(
-                        status: selectedStatus,
-                        species: selectedSpecies,
-                        gender: selectedGender,
-                      ));
+                      context.read<CharacterBloc>().add(
+                        FilterCharacters(
+                          status: selectedStatus,
+                          species: selectedSpecies,
+                          gender: selectedGender,
+                        ),
+                      );
                       Navigator.pop(context);
                     },
                     child: const Text('Apply Filters'),
@@ -98,7 +129,9 @@ class _HomeState extends State<Home> {
                         selectedSpecies = null;
                         selectedGender = null;
                       });
-                      context.read<CharacterBloc>().add(const FetchCharacters());
+                      context.read<CharacterBloc>().add(
+                        const FetchCharacters(),
+                      );
                       Navigator.pop(context);
                     },
                     child: const Text('Clear Filters'),
@@ -115,109 +148,150 @@ class _HomeState extends State<Home> {
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             MaterialButton(
-              onPressed: () {
-                context.read<CharacterBloc>().add(const FetchCharacters());
-              },
+              onPressed: isOffline
+                  ? null
+                  : () {
+                      context.read<CharacterBloc>().add(
+                        const FetchCharacters(),
+                      );
+                    },
               child: const Text('Characters'),
             ),
             MaterialButton(
-              onPressed: () {
-                context.read<EpisodeBloc>().add(FetchEpisodes());
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const EpisodeScreen()));
-              },
+              onPressed: isOffline
+                  ? null
+                  : () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const EpisodeScreen(),
+                        ),
+                      );
+                    },
               child: const Text('Episodes'),
             ),
             MaterialButton(
-              onPressed: () {
-                context.read<LocationBloc>().add(FetchLocations());
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const LocationScreen()));
-              },
+              onPressed: isOffline
+                  ? null
+                  : () {
+                      context.read<LocationBloc>().add(FetchLocations());
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LocationScreen(),
+                        ),
+                      );
+                    },
               child: const Text('Locations'),
             ),
           ],
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 0.8,
-                  child: TextField(
-                    controller: _searchController,
-                    decoration: InputDecoration(
-                      labelText: 'Search...',
-                      border: OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
-                    ),
+      body: isOffline
+          ? Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Image.asset('assets/r&m.jpg', width: 200),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'You\'re offline!',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
-                ),
-                IconButton(
-                  onPressed: () {
-                    final query = _searchController.text.trim();
-                    if (query.isNotEmpty) {
-                      context.read<CharacterBloc>().add(SearchCharacters(query));
-                    }
-                  },
-                  icon: const Icon(Icons.search),
-                ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            Expanded(
-              child: BlocBuilder<CharacterBloc, CharacterState>(
-                builder: (context, state) {
-                  if (state is CharacterLoading) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (state is CharacterLoaded) {
-                    return GridView.builder(
-                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 8.0,
-                        mainAxisSpacing: 8.0,
-                      ),
-                      itemCount: state.characters.length,
-                      itemBuilder: (context, index) {
-                        final character = state.characters[index];
-                        return GestureDetector(
-                          onTap: () {
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(8),
-                              image: DecorationImage(
-                                image: NetworkImage(character.image),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                            child: Align(
-                              alignment: Alignment.bottomCenter,
-                              child: Container(
-                                color: Colors.black54,
-                                padding: const EdgeInsets.all(6),
-                                child: Text(
-                                  character.name,
-                                  style: const TextStyle(color: Colors.white),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
+                  const SizedBox(height: 10),
+                  const Text('Check your internet connection to continue.'),
+                ],
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(10.0),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 0.8,
+                        child: TextField(
+                          controller: _searchController,
+                          decoration: InputDecoration(
+                            labelText: 'Search...',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(20),
                             ),
                           ),
-                        );
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          final query = _searchController.text.trim();
+                          if (query.isNotEmpty) {
+                            context.read<CharacterBloc>().add(
+                              SearchCharacters(query),
+                            );
+                          }
+                        },
+                        icon: const Icon(Icons.search),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Expanded(
+                    child: BlocBuilder<CharacterBloc, CharacterState>(
+                      builder: (context, state) {
+                        if (state is CharacterLoading) {
+                          return const Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        } else if (state is CharacterLoaded) {
+                          return GridView.builder(
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 8.0,
+                                  mainAxisSpacing: 8.0,
+                                ),
+                            itemCount: state.characters.length,
+                            itemBuilder: (context, index) {
+                              final character = state.characters[index];
+                              return GestureDetector(
+                                onTap: () {},
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8),
+                                    image: DecorationImage(
+                                      image: NetworkImage(character.image),
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.bottomCenter,
+                                    child: Container(
+                                      color: Colors.black54,
+                                      padding: const EdgeInsets.all(6),
+                                      child: Text(
+                                        character.name,
+                                        style: const TextStyle(
+                                          color: Colors.white,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        } else if (state is CharacterError) {
+                          return Center(child: Text('Error: ${state.message}'));
+                        }
+                        return const SizedBox.shrink();
                       },
-                    );
-                  } else if (state is CharacterError) {
-                    return Center(child: Text('Error: ${state.message}'));
-                  }
-                  return const SizedBox.shrink();
-                },
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

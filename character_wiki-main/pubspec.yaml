@@ -19,6 +19,7 @@ dependencies:
   bloc: ^9.0.0
   flutter_bloc: ^9.1.1
   get_it: ^8.0.3
+  connectivity_plus: ^6.1.4
 
 dev_dependencies:
   flutter_test:
@@ -26,5 +27,7 @@ dev_dependencies:
   flutter_lints: ^5.0.0
 
 flutter:
+  assets:
+    - assets/r&m.jpg
 
   uses-material-design: true

@@ -1,3 +1,5 @@
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_bloc.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_event.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -161,6 +163,9 @@ class _HomeState extends State<Home> {
               onPressed: isOffline
                   ? null
                   : () {
+                    context.read<EpisodeBloc>().add(
+                        FetchEpisodes(),
+                      );
                       Navigator.push(
                         context,
                         MaterialPageRoute(

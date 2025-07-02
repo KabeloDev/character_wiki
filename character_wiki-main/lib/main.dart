@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 void main() {
-  init(); // from service_locator.dart
+  init(); 
   runApp(const MyApp());
 }
 

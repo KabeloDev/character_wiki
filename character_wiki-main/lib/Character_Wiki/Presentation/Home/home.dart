@@ -102,12 +102,15 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildSearchBar() {
+    final TextEditingController searchController = TextEditingController();
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.8,
           child: TextField(
+            controller: searchController,
             decoration: InputDecoration(
               labelText: 'Search...',
               border: OutlineInputBorder(
@@ -116,7 +119,12 @@ class _HomeState extends State<Home> {
             ),
           ),
         ),
-        IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
+        IconButton(onPressed: () {
+          final query = searchController.text.trim();
+          if (query.isNotEmpty) {
+            context.read<CharacterBloc>().add(SearchCharacters(query));
+          }
+        }, icon: const Icon(Icons.search)),
       ],
     );
   }
@@ -182,27 +190,23 @@ class _HomeState extends State<Home> {
             _buildDropdown('Gender', ['Female', 'Male', 'Unknown']),
           ]),
           const SizedBox(height: 30),
-          _buildFilterSection('Episode', [
-            _buildDropdown('Choose', ['Episode 1', 'Episode 2', 'Episode 3']),
-          ]),
-          _buildFilterSection('Location', [
-            _buildDropdown('Choose', [
-              'Location 1',
-              'Location 2',
-              'Location 3',
-            ]),
-          ]),
           const SizedBox(height: 20),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: ElevatedButton.icon(
+            child: ElevatedButton (
+              onPressed: () {
+                context.read<CharacterBloc>().add(const FetchCharacters());
+                Navigator.pop(context);
+              },
+              child: const Text('Apply Filters'),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: ElevatedButton (
               onPressed: () {},
-              icon: const Icon(Icons.clear),
-              label: const Text('Clear Filters'),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 50),
-                backgroundColor: Colors.redAccent,
-              ),
+              child: const Text('Clear Filters'),
             ),
           ),
         ],

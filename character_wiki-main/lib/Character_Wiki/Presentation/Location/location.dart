@@ -1,6 +1,6 @@
-
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Location/location_state.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/Location/characters_from_location.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -21,9 +21,12 @@ class LocationScreen extends StatelessWidget {
               itemCount: locations.length,
               itemBuilder: (context, index) {
                 final location = locations[index];
-                return ListTile(
+                return ExpansionTile(
                   title: Text(location.name),
                   subtitle: Text('${location.type} • ${location.dimension}'),
+                  children: [
+                    CharacterListWidget(characterUrls: location.residents),
+                  ],
                 );
               },
             );

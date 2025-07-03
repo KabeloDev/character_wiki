@@ -1,7 +1,9 @@
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_bloc.dart';
 import 'package:character_wiki/Character_Wiki/Presentation/BLoC/Episode/epsiode_state.dart';
+import 'package:character_wiki/Character_Wiki/Presentation/Episode/characters_from_episode.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 class EpisodeScreen extends StatelessWidget {
   const EpisodeScreen({super.key});
 
@@ -19,9 +21,12 @@ class EpisodeScreen extends StatelessWidget {
               itemCount: episodes.length,
               itemBuilder: (context, index) {
                 final episode = episodes[index];
-                return ListTile(
+                return ExpansionTile(
                   title: Text(episode.name),
                   subtitle: Text('${episode.episode} • Aired on: ${episode.airDate}'),
+                  children: [
+                    CharactersFromEpisodeScreen(characterUrls: episode.characters),
+                  ],
                 );
               },
             );
